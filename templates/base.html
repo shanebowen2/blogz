@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{title}}</title>
+        <style>
+            .error {
+                color: red;
+            }
+        </style>
+    </head>
+<body bgcolor="#ADD8E6">
+
+    
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        <ul>
+        {% for category,message in messages %}
+            <li class="{{category}}">{{message}}</li>
+        {% endfor %}
+        </ul>
+    {% endwith %}
+
+    {% block content %}
+    {% endblock %}
+
+    <div>
+        <button type="button"><a href='/blog'>View All Blog Posts</a></button>
+    
+        <button type="button"><a href='/newpost'>Write A New Blog Post</a></button>
+    
+        <button type="button"><a href='/logout'>Log Out</a></button>
+    </div>
+
+</body>
+</html>
