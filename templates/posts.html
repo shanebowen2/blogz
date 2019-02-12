@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <h1>Build-A-Blog</h1>
+    <h1>Blogz</h1>
     
 
     <hr />
@@ -16,6 +16,9 @@
         <li><h1><a href='/blog?id={{post.id}}'>{{post.title}}</a></h1>
             <p>
                 {{post.body}}
+            </p>
+            
+                    <p class="user">Posted by: <a href="/blog?user={{post.owner_id}}">{{ post.owner.email }}</a></p>
             </p>
             <hr>
         </li>

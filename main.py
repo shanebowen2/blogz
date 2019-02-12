@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:build-a-blog@localhost:8889/build-a-blog'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:blogz@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 app.secret_key = 'gobble'
@@ -16,9 +16,10 @@ class Blog(db.Model):
     body = db.Column(db.String(5000))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
-    def __init__(self, title, body):
+    def __init__(self, title, body, owner):
         self.title = title
         self.body = body
+        self.owner = owner
 
 posts =[]    
 
@@ -35,29 +36,35 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'register']
+    allowed_routes = ['login', 'register', 'blog', 'index']
     if request.endpoint not in allowed_routes and 'email' not in session:
         return redirect('/login')
 
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
-     
-    return redirect('/blog')
+    authors = User.query.all()
+    return render_template('index.html', authors=authors, title='Blogz')
 
 
 
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
-    
+    posts = Blog.query.all()
     blog_id = request.args.get('id')
+    user_id = request.args.get('user')
+    
 
-    if blog_id == None:
-        posts = Blog.query.all()
+    if blog_id == None and user_id == None:
         return render_template('posts.html', posts=posts, title='Build-a-blog')
-    else:
-        post = Blog.query.get(blog_id)
+    elif blog_id:
+        post = Blog.query.filter_by(id=blog_id).first()
         return render_template('entry.html', post=post, title='Blog Entry')
+    elif user_id:
+        entries = Blog.query.filter_by(owner_id=user_id).all()
+        return render_template('singleuser.html', entries=entries)
+
+
 
 @app.route('/newpost')
 def new_post():
@@ -74,6 +81,7 @@ def new_post_complete():
 
     username = request.form['username']
     password = request.form['password']
+    owner = User.query.filter_by(email=session['email']).first()
 
     username_error = ""
     password_error = ""
@@ -89,7 +97,7 @@ def new_post_complete():
         username = ''
      
     if not username_error and not password_error:
-        new_entry = Blog(username, password)
+        new_entry = Blog(username, password, owner)
         db.session.add(new_entry)
         db.session.commit()
 
@@ -145,7 +153,8 @@ def register():
 @app.route('/logout')
 def logout():
     del session['email']
-    return redirect('/')
+    return redirect('/blog')
+
 
 
 @app.route("/delete-post", methods=['POST'])
