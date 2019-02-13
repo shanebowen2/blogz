@@ -2,8 +2,7 @@
 
 {% block content %}
 
-    <h1>Blogz</h1>
-    
+      
 
     <hr />
 
@@ -13,7 +12,7 @@
 
     <ul>
         {% for author in authors %}
-        <li><h1><a href='/blog?user={{author.id}}'>{{author.email}}</a></h1>
+        <li><h2><a href='/blog?user={{author.id}}'>{{author.email}}</a></h2>
             
             <hr>
         </li>

@@ -3,11 +3,32 @@
 <head>
     <title>Blogz by Shane Bowen</title>
     <link href="styles.css" type="text/css" rel="stylesheet">
+    <style>
+    .error {
+    color: red;
+    }  
+
+    body {
+    background-color: rgb(0, 255, 55);
+    }
+
+    p {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+    }
+
+    h1 {
+    text-align: center;
+    }
+
+    </style>
 </head>
 
     <body>
 
-    
+    <h1>Blogz</h1>
 
     {% with messages = get_flashed_messages(with_categories=True) %}
         <ul>
